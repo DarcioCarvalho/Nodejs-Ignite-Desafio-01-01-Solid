@@ -1,0 +1,309 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Atlas",
+    "description": "Essa é uma documentação sobre o Atlas API.",
+    "version": "1.0.0",
+    "contact": {
+      "email": "darcio.carvalho.dev@gmail.com"
+    }
+  },
+  "paths": {
+    "/users": {
+      "post": {
+        "tags":  [ "users"],
+        "summary": "Cria um novo usuário.",
+        "requestBody": {
+          "description": "Campos obrigatórios para criação de um usuário",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/userCreate"
+              },
+              "example": {
+                "name": "Dárcio Carvalho",
+                "email": "darcio.carvalho.dev@gmail.com"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201": {
+            "description": "Usuário criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/user"
+                },
+                "example": {
+                  "id": "9f3b474e-a111-47ee-a66b-dc74fdd1ca18",
+                  "admin": false,
+                  "name": "Dárcio Nuno de Carvalho",
+                  "email": "darcio.carvalho.dev@gmail.com",
+                  "created_at": "2023-10-25T19:04:35.094Z",
+                  "updated_at": "2023-10-25T19:04:35.094Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "E-mail já está sendo utilizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/errorMessage"
+                },
+                "example": {
+                  "error": "This email is already in use."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags":  [ "users"],
+        "summary": "Retorna todos os usuários.",
+        "description": "Somente usuário `admin` pode acessar.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses" : {
+          "200": {
+            "description": "Operação realizada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/userList"
+                },
+                "example": [
+                  {
+                    "id": "9f3b474e-a111-47ee-a66b-dc74fdd1ca18",
+                    "admin": false,
+                    "name": "Dárcio Nuno de Carvalho",
+                    "email": "darcio.carvalho.dev@gmail.com",
+                    "created_at": "2023-10-25T19:04:35.094Z",
+                    "updated_at": "2023-10-25T19:04:35.094Z"
+                  },
+                  {
+                    "id": "9f3b474e-a111-47ee-a66b-dc74fdd1ca18",
+                    "admin": false,
+                    "name": "Dárcio Nuno de Carvalho",
+                    "email": "darcio.carvalho.dev@gmail.com",
+                    "created_at": "2023-10-25T19:04:35.094Z",
+                    "updated_at": "2023-10-25T19:04:35.094Z"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "Usuário sem permissão ou Usuário não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/errorMessage"
+                },
+                "example": 
+                  {
+                  "error": "You need to be an administrator to list all users."
+                  }
+              }
+            }
+          }
+        }
+      }        
+    },
+    "/users/{user_id}": {
+      "get": {
+        "tags":  [ "users"],
+        "summary": "Retorna um usuário específico.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do usuário",
+            "schema": {
+              "type": "string",
+              "example": "user_id - ID do usuário"
+            }
+          }
+        ],
+        "responses" : {
+          "200": {
+            "description": "Operação realizada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/user"
+                },
+                "example": 
+                  {
+                    "id": "9f3b474e-a111-47ee-a66b-dc74fdd1ca18",
+                    "admin": false,
+                    "name": "Dárcio Nuno de Carvalho",
+                    "email": "darcio.carvalho.dev@gmail.com",
+                    "created_at": "2023-10-25T19:04:35.094Z",
+                    "updated_at": "2023-10-25T19:04:35.094Z"
+                  }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/errorMessage"
+                },
+                "example": 
+                  {
+                  "error": "User not found."
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}/admin": {
+      "patch": {
+        "tags":  [ "users"],
+        "summary": "Torna admin um usuário.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do usuário",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses" : {
+          "200": {
+            "description": "Operação realizada com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/user"
+                },
+                "example": 
+                  {
+                    "id": "9f3b474e-a111-47ee-a66b-dc74fdd1ca18",
+                    "admin": true,
+                    "name": "Dárcio Nuno de Carvalho",
+                    "email": "darcio.carvalho.dev@gmail.com",
+                    "created_at": "2023-10-25T19:04:35.094Z",
+                    "updated_at": "2023-10-25T19:04:35.094Z"
+                  }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/errorMessage"
+                },
+                "example": 
+                  {
+                  "error": "User not found."
+                  }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "userCreate":{
+      "type": "object",
+      "properties": {
+         "name": {
+           "type": "string"
+         },
+         "email": {
+           "type": "string"
+         }
+       }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "admin": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "Date"
+        },
+        "updated_at": {
+          "type": "Date"
+        }
+      }
+    },
+    "userList": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "admin": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "Date"
+          },
+          "updated_at": {
+            "type": "Date"
+          }
+        }
+      }
+    },
+    "errorMessage": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "description": "Gerenciamento de usuários",
+      "name": "users"
+    }
+  ]
+}
